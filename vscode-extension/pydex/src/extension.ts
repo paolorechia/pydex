@@ -5,6 +5,17 @@ import { SecretStorage } from "vscode";
 import got from 'got';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
+const pydexUrl = "https://dev.codex.api.openimagegenius.com";
+
+interface PydexResponse {
+	response: EditResponse;
+}
+
+interface EditResponse {
+	text: string;
+	index: number;
+}
+
 export function activate(context: vscode.ExtensionContext) {
 
 	const secrets: SecretStorage = context.secrets;
@@ -28,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
 				verified = true;
 			}
 			if (userToken && verified) {
-				secrets.store("pydex-token", userToken);
+				await secrets.store("pydex-token", userToken);
 			}
 		}
 
@@ -39,20 +50,33 @@ export function activate(context: vscode.ExtensionContext) {
 		const document = activeEditor.document;
 		const selection = activeEditor.selection;
 
-		const url = 'https://httpbin.org/anything';
-		const data = await got(url).json();
+		const text = document.getText(selection);
 
-		console.log("From got", data);
-		// Get the word within the selection
-		const word = document.getText(selection);
-		console.log("Selection", selection);
-		console.log("Selected word", word);
-		const reversed = word.split('').reverse().join('');
+		const requestBody = JSON.stringify({
+			data: text
+		});
+		const url = `${pydexUrl}/add_docstring`;
+
+		console.log("Calling API", url, "with body: ", requestBody);
+		const response: PydexResponse = await got(url, {
+			method: "POST",
+			headers: {
+				// eslint-disable-next-line @typescript-eslint/naming-convention
+				"Content-Type": "application/json",
+				// eslint-disable-next-line @typescript-eslint/naming-convention
+				"Authorization": userToken
+			},
+			body: requestBody
+		}).json();
+
+		console.log("From got", response);
+		const editedText = response.response.text;
 
 		activeEditor.edit(editBuilder => {
 			console.log("Edit builder", editBuilder);
-			editBuilder.replace(selection, reversed);
+			editBuilder.replace(selection, editedText);
 		});
+
 	});
 
 
