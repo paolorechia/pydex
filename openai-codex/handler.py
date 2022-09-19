@@ -1,13 +1,17 @@
-import boto3
+import json
 import logging
 import os
-from lib.authorizer import create_policy, find_resources
-from lib.repository import Repository
-from lib.database_models import UserModel
-from lib.codex import OpenAICodex
-from uuid import uuid4
 import secrets
-import json
+from uuid import uuid4
+
+import boto3
+
+from lib.authorizer import create_policy, find_resources
+from lib.codex import OpenAICodex
+from lib.database_models import UserModel
+from lib.repository import Repository
+from lib.request_helper import build_pydex_response
+from lib.request_models import Request
 
 stage = os.environ["STAGE"]
 logger = logging.getLogger(__name__)
@@ -18,16 +22,34 @@ db = Repository(boto3.client("dynamodb"))
 
 def pydex(event, context):
     logger.info("Event: %s", event)
+
+    try:
+        body = json.loads(event.get("body"))
+    except json.JSONDecodeError as e:
+        return build_pydex_response(400, "Invalid JSON body")
+
+    logger.info("Decoded body: %s", body)
     path_parameter = event.get("pathParameters", {})
-    docstring = path_parameter.get("docstring")
-    body = json.loads(event.get("body"))
+    request_type = path_parameter.get("request_type")
+
+    logger.info("Request Type: %s", request_type)
+    try:
+        request = Request(request_type=request_type, data=body.get("data"))
+        request.validate()
+    except ValueError as e:
+        logger.exception(e)
+        return build_pydex_response(400, "Invalid request")
+
     user_id = event.get("requestContext", {}).get("authorizer", {}).get("user")
 
-    # if docstring:
-    #     return {"statusCode": 200, "body": json.dumps(edit(docstring))}
-    response = {"message": "Hello World"}
+    if request_type == "add_docstring":
+        input_function = request.data
 
-    return {"statusCode": 200, "body": json.dumps(response)}
+        with OpenAICodex(user_id) as codex:
+            edition = codex.edit(input_=input_function, instruction="Add docstring")
+            return build_pydex_response(200, edition)
+
+    return build_pydex_response(400, "Invalid request")
 
 
 def authorizer(event, context):

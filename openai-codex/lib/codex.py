@@ -1,8 +1,7 @@
 import os
-import openai
+import requests
 import logging
 
-# model="code-davinci-002"
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -11,25 +10,48 @@ logger.setLevel(logging.INFO)
 class OpenAICodex:
     def __init__(self) -> None:
         self.api_key = os.environ["OPENAI_API_KEY"]
-        openai.api_key = self.api_key
         self.completion_model = "code-cushman-001"
         self.edition_model = "code-davinci-edit-001"
         self.moderation_model = "text-moderation-latest"
         self.user_id = ""
+        self.session = None
 
-    def __enter__(self, user_id):
+    def _call_api(self, endpoint, data):
+        headers = {"Authorization": f"Bearer {self.api_key}"}
+        url = f"https://api.openai.com/v1/{endpoint}"
+        logger.info("Calling API: %s with data: %s", url, data)
+        response = requests.post(
+            url,
+            headers=headers,
+            json=data,
+        )
+        logger.info("Status code: %s", response.status_code)
+
+        json_response = response.json()
+        logger.info("Response: %s", json_response)
+        return json_response
+
+    def __enter__(self, user_id, session):
         self.user_id = user_id
+        self.session = session
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.user_id = ""
+        self.session = None
         if exc_type:
             logger.error("Traceback: %s", traceback)
             raise exc_type(exc_value)
 
     def is_safe_content(self, content):
         logger.info("Checking if content is safe: %s", content)
-        response = openai.Moderation.create(content)
+        response = self._call_api(
+            "moderations",
+            {
+                "model": self.moderation_model,
+                "inputs": content,
+            },
+        )
         logger.info("Response: %s", response)
         return response["results"][0]["flagged"] == False
 
@@ -38,12 +60,15 @@ class OpenAICodex:
             raise ValueError("Content is not safe.")
 
         logger.info("Completing prompt: %s", prompt)
-        completion = openai.Completion.create(
-            model=self.completion_model,
-            prompt=prompt,
-            max_tokens=100,
-            temperature=0.5,
-            user=self.user_id,
+        completion = self._call_api(
+            "completions",
+            data={
+                "model": self.completion_model,
+                "prompt": prompt,
+                "max_tokens": 100,
+                "temperature": 0.5,
+                "user": self.user_id,
+            },
         )
         logger.info("Completion: %s", completion)
         # For now, assume just one choice is available
@@ -54,12 +79,15 @@ class OpenAICodex:
             raise ValueError("Content is not safe.")
 
         logger.info("Editing input: %s", input_)
-        edition = openai.Edit.create(
-            model=self.edition_model,
-            input=input_,
-            instruction=instruction,
-            temperature=temperature,
-            user=self.user_id,
+        edition = self._call_api(
+            "edits",
+            {
+                "model": self.edition_model,
+                "input": input_,
+                "instruction": instruction,
+                "temperature": temperature,
+                "user": self.user_id,
+            },
         )
         logger.info("Edition: %s", edition)
         # For now, assume just one choice is available
