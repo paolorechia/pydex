@@ -55,8 +55,8 @@ class OpenAICodex:
         return response["results"][0]["flagged"] == False
 
     def complete(self, prompt):
-        if not self.is_safe_content(prompt):
-            raise ValueError("Content is not safe.")
+        # if not self.is_safe_content(prompt):
+        #     raise ValueError("Content is not safe.")
 
         logger.info("Completing prompt: %s", prompt)
         completion = self._call_api(
@@ -74,8 +74,8 @@ class OpenAICodex:
         return completion["choices"][0]
 
     def edit(self, input_, instruction, temperature=0.5):
-        if not self.is_safe_content(input_):
-            raise ValueError("Content is not safe.")
+        # if not self.is_safe_content(input_):
+        #     raise ValueError("Content is not safe.")
 
         logger.info("Editing input: %s", input_)
         edition = self._call_api(
