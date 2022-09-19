@@ -21,10 +21,13 @@ def pydex(event, context):
     path_parameter = event.get("pathParameters", {})
     docstring = path_parameter.get("docstring")
     body = json.loads(event.get("body"))
+    user_id = event.get("requestContext", {}).get("authorizer", {}).get("user")
 
     # if docstring:
     #     return {"statusCode": 200, "body": json.dumps(edit(docstring))}
-    return {"statusCode": 200}
+    response = {"message": "Hello World"}
+
+    return {"statusCode": 200, "body": json.dumps(response)}
 
 
 def authorizer(event, context):
