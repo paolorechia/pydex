@@ -3,13 +3,11 @@
 import * as vscode from 'vscode';
 import { SecretStorage } from "vscode";
 import got from 'got';
-
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
-	const secrets = context['secrets']; //SecretStorage-object
-
+	const secrets: SecretStorage = context.secrets;
 
 	console.log('Congratulations, your extension "pydex" is now active!');
 
@@ -18,12 +16,10 @@ export function activate(context: vscode.ExtensionContext) {
 		if (!activeEditor) {
 			return;
 		}
-		let userToken = undefined;
+		let userToken = await secrets.get("pydex-token");
 
-		userToken = secrets.get("pydex-token");
 		console.log("Fetched token", userToken);
-		//@ts-ignore
-		if (userToken === undefined || userToken._value === null) {
+		if (!userToken) {
 			let verified = false;
 			userToken = await vscode.window.showInputBox({ title: 'Enter your API token', password: true });
 			// Verify user token
@@ -36,7 +32,6 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}
 
-		// const input = vscode.commands.executeCommand("vscode.window.showInputBox", {}, {});
 		console.log("User token: ", userToken);
 
 		// The code you place here will be executed every time your command is executed
