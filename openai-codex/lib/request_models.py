@@ -4,10 +4,17 @@ from dataclasses import dataclass
 
 @dataclass
 class Request:
+    """
+    Dataclass for storing data from request
+    """
     data: str
     request_type: str
 
     def validate(self):
+        """
+        Validates data from request
+        :return:
+        """
         if type(self.data) != str or type(self.request_type) != str:
             raise ValueError("Non string data or request_type")
         if self.request_type.lower() not in REQUEST_TYPES:
