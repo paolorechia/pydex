@@ -10,26 +10,26 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:pydex.helloSelection"
+    "onCommand:pydex.addDocstring"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "pydex.helloSelection",
-        "title": "Hello Selection"
+        "command": "pydex.addDocstring",
+        "title": "Add Docstring to Selection"
       }
     ],
     "menus": {
       "commandPalette": [
         {
-          "command": "pydex.helloSelection",
+          "command": "pydex.addDocstring",
           "when": "editorHasSelection"
         }
       ],
       "editor/context": [
         {
-          "command": "pydex.helloSelection",
+          "command": "pydex.addDocstring",
           "when": "editorHasSelection",
           "group": "7_modification"
         }

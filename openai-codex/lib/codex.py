@@ -8,6 +8,10 @@ logger.setLevel(logging.INFO)
 
 
 class OpenAICodex:
+    """
+    Used for making calls to the OpenAI API
+    """
+
     def __init__(self, user_id, session) -> None:
         self.api_key = os.environ["OPENAI_API_KEY"]
         self.completion_model = "code-cushman-001"
@@ -33,6 +37,7 @@ class OpenAICodex:
         json_response = response.json()
         logger.info("Response: %s", json_response)
         return json_response
+
 
     def __enter__(self):
         return self

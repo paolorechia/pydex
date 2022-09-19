@@ -32,6 +32,10 @@ def to_dynamodb_strings(model_dict_instance):
 
 
 class Repository:
+    """
+    Repository for persisting data in DynamoDB.
+    """
+    
     def __init__(self, dynamo_client):
         self.ddb = dynamo_client
         self.environment = EnvironmentInfo()
@@ -47,6 +51,7 @@ class Repository:
         if user:
             return UserModel(**flatten_response(user))
         return None
+
 
     def save_user(self, new_user: UserModel) -> None:
         logger.info("Saving user to Dynamo: %s", str(new_user))
