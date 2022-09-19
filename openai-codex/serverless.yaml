@@ -3,18 +3,22 @@ frameworkVersion: "3"
 
 package:
   patterns:
-    - "!manual_dist"
-    - "!node_modules/**"
-    - "!auth-sls"
     - "!.serverless"
+    - "!node_modules"
+    - "!codex"
     - "!.gitignore"
     - "!package.json"
     - "!package-lock.json"
     - "!.requirements.zip"
+    - "!.codex_api_key"
+    - "!playground.py"
+    - "!sample_api_key"
+    - "handler.py"
+    - "lib"
 
 provider:
   name: aws
-  runtime: python3.8
+  runtime: python3.9
   stage: ${opt:stage}
   region: eu-central-1
   memorySize: 256
@@ -37,11 +41,12 @@ provider:
 functions:
   pydex:
     handler: handler.pydex
-    authorizer: authorizer
     events:
       - http:
           path: /docstring
           method: POST
+          authorizer: authorizer
+
     layers:
       - Ref: PythonRequirementsLambdaLayer
     timeout: 6
@@ -58,13 +63,13 @@ plugins:
   - serverless-api-gateway-throttling
 
 custom:
-  userTableName: users-table-${self:provider.stage}
+  userTableName: ${self:service}-users-table-${self:provider.stage}
   apiGatewayThrottling:
     maxRequestsPerSecond: 2
     maxConcurrentRequests: 5
   domainName:
-    dev: ${self:provider.stage}.api.openimagegenius.com
-    prod: api.openimagegenius.com
+    dev: ${self:provider.stage}.codex.api.openimagegenius.com
+    prod: codex.api.openimagegenius.com
   customDomain:
     domainName: ${self:custom.domainName.${self:provider.stage}}
     basePath: pydex
@@ -88,8 +93,6 @@ resources:
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
           - AttributeName: api_token
-            AttributeType: S
-          - AttributeName: unique_user_id
             AttributeType: S
         KeySchema:
           - AttributeName: api_token

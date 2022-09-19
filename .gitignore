@@ -1,2 +1,4 @@
 .codex_api_key
 .vscode
+**/dist/**
+**/node_modules/**
