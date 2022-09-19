@@ -4,9 +4,10 @@ import os
 from lib.authorizer import create_policy, find_resources
 from lib.repository import Repository
 from lib.database_models import UserModel
-from lib.codex import complete, edit
+from lib.codex import OpenAICodex
 from uuid import uuid4
 import secrets
+import json
 
 stage = os.environ["STAGE"]
 logger = logging.getLogger(__name__)
@@ -17,6 +18,12 @@ db = Repository(boto3.client("dynamodb"))
 
 def pydex(event, context):
     logger.info("Event: %s", event)
+    path_parameter = event.get("pathParameters", {})
+    docstring = path_parameter.get("docstring")
+    body = json.loads(event.get("body"))
+
+    # if docstring:
+    #     return {"statusCode": 200, "body": json.dumps(edit(docstring))}
     return {"statusCode": 200}
 
 
@@ -24,7 +31,7 @@ def authorizer(event, context):
     logger.info("Event: %s", event)
     resources = find_resources(event, stage)
 
-    token = event.get("headers", {}).get("Authorization")
+    token = event.get("authorizationToken")
     if token:
         maybe_user = db.get_user_by_api_token(token)
         if maybe_user:

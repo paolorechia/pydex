@@ -44,7 +44,7 @@ functions:
     handler: handler.pydex
     events:
       - http:
-          path: /docstring
+          path: /{request_type}
           method: POST
           authorizer:
             name: authorizer
@@ -55,6 +55,8 @@ functions:
     layers:
       - Ref: PythonRequirementsLambdaLayer
     timeout: 6
+    environment:
+      OPENAI_API_TOKEN: ${ssm:/${self:provider.stage}/openai/codex_token}
 
   authorizer:
     handler: handler.authorizer
@@ -83,7 +85,6 @@ custom:
     prod: codex.api.openimagegenius.com
   customDomain:
     domainName: ${self:custom.domainName.${self:provider.stage}}
-    basePath: pydex
     stage: ${self:provider.stage}
     createRoute53Record: true
     endpointType: EDGE
@@ -93,7 +94,6 @@ custom:
     zip: true
     layer: true
     usePipenv: false
-
 
 resources:
   Resources:
