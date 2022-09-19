@@ -38,6 +38,7 @@ provider:
     # Tables
     USER_TABLE_NAME: ${self:custom.userTableName}
     STAGE: ${self:provider.stage}
+    GOOGLE_OAUTH_ID: ${self:custom.googleOAuthID}
 
 functions:
   pydex:
@@ -56,7 +57,7 @@ functions:
       - Ref: PythonRequirementsLambdaLayer
     timeout: 6
     environment:
-      OPENAI_API_TOKEN: ${ssm:/${self:provider.stage}/openai/codex_token}
+      OPENAI_API_KEY: ${ssm:/${self:provider.stage}/openai/codex_token}
 
   authorizer:
     handler: handler.authorizer
@@ -77,6 +78,7 @@ plugins:
 
 custom:
   userTableName: ${self:service}-users-table-${self:provider.stage}
+  googleOAuthID: 492480302511-mngj2psfpfrfj13efmns71n9c4pe030l.apps.googleusercontent.com
   apiGatewayThrottling:
     maxRequestsPerSecond: 2
     maxConcurrentRequests: 5
@@ -94,6 +96,7 @@ custom:
     zip: true
     layer: true
     usePipenv: false
+  
 
 resources:
   Resources:

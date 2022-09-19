@@ -1,7 +1,7 @@
 import requests
 import pytest
 
-docstring_url = "https://dev.codex.api.openimagegenius.com/docstring"
+docstring_url = "https://dev.codex.api.openimagegenius.com/add_docstring"
 api_key = ""
 with open(".test_api_key", "r") as f:
     api_key = f.read().strip()
@@ -12,8 +12,7 @@ def test_handler():
         docstring_url,
         headers={"Authorization": api_key},
         json={
-            "request_type": "add_docstring",
-            "data": \
+             "data": \
 """def sum(a, b):
     return a + b
 """,

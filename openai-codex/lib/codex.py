@@ -8,16 +8,19 @@ logger.setLevel(logging.INFO)
 
 
 class OpenAICodex:
-    def __init__(self) -> None:
+    def __init__(self, user_id, session) -> None:
         self.api_key = os.environ["OPENAI_API_KEY"]
         self.completion_model = "code-cushman-001"
         self.edition_model = "code-davinci-edit-001"
         self.moderation_model = "text-moderation-latest"
-        self.user_id = ""
-        self.session = None
+        self.user_id = user_id
+        self.session = session
 
     def _call_api(self, endpoint, data):
-        headers = {"Authorization": f"Bearer {self.api_key}"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
         url = f"https://api.openai.com/v1/{endpoint}"
         logger.info("Calling API: %s with data: %s", url, data)
         response = requests.post(
@@ -31,14 +34,10 @@ class OpenAICodex:
         logger.info("Response: %s", json_response)
         return json_response
 
-    def __enter__(self, user_id, session):
-        self.user_id = user_id
-        self.session = session
+    def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.user_id = ""
-        self.session = None
         if exc_type:
             logger.error("Traceback: %s", traceback)
             raise exc_type(exc_value)
@@ -49,7 +48,7 @@ class OpenAICodex:
             "moderations",
             {
                 "model": self.moderation_model,
-                "inputs": content,
+                "input": content,
             },
         )
         logger.info("Response: %s", response)

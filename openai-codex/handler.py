@@ -5,6 +5,7 @@ import secrets
 from uuid import uuid4
 
 import boto3
+import requests
 
 from lib.authorizer import create_policy, find_resources
 from lib.codex import OpenAICodex
@@ -18,6 +19,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 db = Repository(boto3.client("dynamodb"))
+
+http_session = requests.Session()
 
 
 def pydex(event, context):
@@ -45,7 +48,7 @@ def pydex(event, context):
     if request_type == "add_docstring":
         input_function = request.data
 
-        with OpenAICodex(user_id) as codex:
+        with OpenAICodex(user_id=user_id, session=http_session) as codex:
             edition = codex.edit(input_=input_function, instruction="Add docstring")
             return build_pydex_response(200, edition)
 
