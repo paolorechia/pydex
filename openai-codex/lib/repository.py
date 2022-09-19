@@ -32,9 +32,9 @@ def to_dynamodb_strings(model_dict_instance):
 
 
 class Repository:
-    def __init__(self, dynamo_client, environment_info: EnvironmentInfo):
+    def __init__(self, dynamo_client):
         self.ddb = dynamo_client
-        self.environment = environment_info
+        self.environment = EnvironmentInfo()
 
     def get_user_by_api_token(self, api_token: str) -> Optional[UserModel]:
         logger.info("Requesting user by unique user id: %s", api_token)

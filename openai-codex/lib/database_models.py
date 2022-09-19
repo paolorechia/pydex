@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class Metadata:
     class UserTable:
-        primary_key = "unique_user_id"
+        primary_key = "api_token"
 
 
 class UserModel(BaseModel):

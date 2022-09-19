@@ -37,6 +37,7 @@ provider:
   environment:
     # Tables
     USER_TABLE_NAME: ${self:custom.userTableName}
+    STAGE: ${self:provider.stage}
 
 functions:
   pydex:
@@ -45,7 +46,11 @@ functions:
       - http:
           path: /docstring
           method: POST
-          authorizer: authorizer
+          authorizer:
+            name: authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
 
     layers:
       - Ref: PythonRequirementsLambdaLayer
@@ -55,7 +60,13 @@ functions:
     handler: handler.authorizer
     layers:
       - Ref: PythonRequirementsLambdaLayer
-    timeout: 6    
+    timeout: 6
+
+  addUser:
+    handler: handler.add_user
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
+    timeout: 6
 
 plugins:
   - serverless-domain-manager
