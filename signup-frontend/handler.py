@@ -1,15 +1,27 @@
+import os
+
 from jinja2 import Environment, PackageLoader, select_autoescape
+
 env = Environment(
-    loader=PackageLoader("signup-frontend", "templates"),
-    autoescape=select_autoescape()
+    loader=PackageLoader("template_app", "templates"), autoescape=select_autoescape()
 )
 
-dev_url = "https://dev.codex.api.openimagegenius.com/redirect"
-prod_url = "https://codex.api.openimagegenius.com/redirect"
+urls = {
+    "dev": "https://dev.codex.api.openimagegenius.com/redirect",
+    "prod": "https://codex.api.openimagegenius.com/redirect",
+}
+
+signup_template = env.get_template("signup.html")
+stage = os.environ["STAGE"]
 
 
 def signup(event, context):
-    pass
+    html = signup_template.render(url=urls[stage])
+    return {
+        "statusCode": 200,
+        "headers": {"Content-Type": "text/html"},
+        "body": html,
+    }
 
 
 def google_redirect(event, context):

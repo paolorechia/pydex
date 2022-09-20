@@ -3,6 +3,7 @@ frameworkVersion: "3"
 
 package:
   patterns:
+    - "!signup"
     - "!.serverless"
     - "!node_modules"
     - "!.gitignore"
