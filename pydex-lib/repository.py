@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Optional
 
-from lib.database_models import Metadata, UserModel
+from database_models import Metadata, UserModel
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -35,7 +35,7 @@ class Repository:
     """
     Repository for persisting data in DynamoDB.
     """
-    
+
     def __init__(self, dynamo_client):
         self.ddb = dynamo_client
         self.environment = EnvironmentInfo()
@@ -51,7 +51,6 @@ class Repository:
         if user:
             return UserModel(**flatten_response(user))
         return None
-
 
     def save_user(self, new_user: UserModel) -> None:
         logger.info("Saving user to Dynamo: %s", str(new_user))

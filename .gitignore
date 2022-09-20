@@ -1,7 +1,9 @@
 .codex_api_key
+.test_api_key
 .vscode
 **/dist/**
 **/node_modules/**
 *.vsix
 **/__pycache__/**
 **/.serverless
+pydex-venv

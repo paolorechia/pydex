@@ -1,0 +1,8 @@
+# serverless-compose.yml
+services:
+  pydex-database:
+    path: pydex-database
+  pydex-api:
+    path: pydex-api
+  pydex-registration:
+    path: pydex-registration

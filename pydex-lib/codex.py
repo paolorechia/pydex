@@ -38,7 +38,6 @@ class OpenAICodex:
         logger.info("Response: %s", json_response)
         return json_response
 
-
     def __enter__(self):
         return self
 

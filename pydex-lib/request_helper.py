@@ -12,11 +12,9 @@ def build_pydex_response(status_code, response):
     return {"statusCode": status_code, "body": json.dumps({"response": response})}
 
 
-
 def build_error_message_body(error):
     """Return error message body."""
     return json.dumps({"message_type": "error", "data": error})
-
 
 
 def build_rate_limited_response():

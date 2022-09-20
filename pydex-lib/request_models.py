@@ -7,6 +7,7 @@ class Request:
     """
     Dataclass for storing data from request
     """
+
     data: str
     request_type: str
 
