@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Optional
 
-from database_models import Metadata, UserModel
+from pydex_lib.database_models import Metadata, UserModel
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

@@ -1,5 +1,6 @@
-import os
+import functools
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -30,3 +31,20 @@ class TelegramClient:
 def get_telegram(http_session) -> TelegramClient:
     env = TelegramEnvironment()
     return TelegramClient(http_session, env.token, env.chat_id)
+
+
+def telegram_on_error(http_session):
+    def decorator_func(func):
+        @functools.wraps(func)
+        def wrapped_function(*args, **kwargs):
+            telegram_client = get_telegram(http_session)
+            try:
+                func(*args, **kwargs)
+            except Exception as e:
+                telegram_client.send_message(f"Error: {e}")
+                raise e
+            return func(*args, **kwargs)
+
+        return wrapped_function
+
+    return decorator_func

@@ -6,13 +6,13 @@ from uuid import uuid4
 
 import boto3
 import requests
-
-from lib.authorizer import create_policy, find_resources
-from lib.codex import OpenAICodex
-from lib.database_models import UserModel
-from lib.repository import Repository
-from lib.request_helper import build_pydex_response
-from lib.request_models import Request
+from pydex_lib.authorizer import create_policy, find_resources
+from pydex_lib.codex import OpenAICodex
+from pydex_lib.database_models import UserModel
+from pydex_lib.repository import Repository
+from pydex_lib.request_helper import build_pydex_response
+from pydex_lib.request_models import Request
+from pydex_lib.telegram import telegram_on_error
 
 stage = os.environ["STAGE"]
 logger = logging.getLogger(__name__)
@@ -23,6 +23,7 @@ db = Repository(boto3.client("dynamodb"))
 http_session = requests.Session()
 
 
+@telegram_on_error(http_session)
 def pydex(event, context):
     logger.info("Event: %s", event)
 
@@ -55,6 +56,7 @@ def pydex(event, context):
     return build_pydex_response(400, "Invalid request")
 
 
+@telegram_on_error(http_session)
 def authorizer(event, context):
     logger.info("Event: %s", event)
     resources = find_resources(event, stage)
@@ -73,6 +75,7 @@ def authorizer(event, context):
     return deny_policy
 
 
+@telegram_on_error(http_session)
 def add_user(event, context):
     logger.info("Event: %s", event)
     token_size = 32

@@ -1,6 +1,7 @@
-import pytest
-import boto3
 import json
+
+import boto3
+import pytest
 
 lambda_name = "pydex-api-dev-addUser"
 

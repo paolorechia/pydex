@@ -36,6 +36,9 @@ provider:
     USER_TABLE_NAME: ${self:custom.databaseInfo.userTableName}
     STAGE: ${self:provider.stage}
     GOOGLE_OAUTH_ID: ${self:custom.googleOAuthID}
+    REDIS_PREFIX: ${ssm:/${self:provider.stage}/redis/pydex/registration/prefix}
+    TELEGRAM_CHAT_ID: ${self:custom.commonEnvironment.telegram.chat_id}
+    TELEGRAM_TOKEN: ${self:custom.commonEnvironment.telegram.token}
 
 functions:
   signup:
@@ -64,7 +67,8 @@ plugins:
   - serverless-api-gateway-throttling
 
 custom:
-  databaseInfo: ${file(../database/serverless.yml):custom}
+  databaseInfo: ${file(../pydex-database/serverless.yml):custom}
+  commonEnvironment: ${file(../pydex-environment/environment.yml)}
   googleOAuthID: 492480302511-mngj2psfpfrfj13efmns71n9c4pe030l.apps.googleusercontent.com
   apiGatewayThrottling:
     maxRequestsPerSecond: 2

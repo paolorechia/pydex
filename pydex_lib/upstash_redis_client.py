@@ -1,5 +1,6 @@
-import os
 import logging
+import os
+
 from requests import Session
 
 logger = logging.getLogger(__name__)

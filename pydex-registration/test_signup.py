@@ -1,11 +1,12 @@
 import os
 from unittest.mock import patch
+
 import pytest
 
 
 @patch.dict(os.environ, {"STAGE": "dev"})
 def test_signup_render():
-    from handler import signup
+    from signup import signup
 
     response = signup({}, {})
     assert response["statusCode"] == 200

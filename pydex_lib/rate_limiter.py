@@ -2,7 +2,7 @@ import os
 
 from requests import Session
 
-from upstash_redis_client import (
+from pydex_lib.upstash_redis_client import (
     RedisEnvironmentInfo,
     RedisUpstashRestAPIClient,
 )

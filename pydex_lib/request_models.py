@@ -1,5 +1,6 @@
-from lib.database_models import REQUEST_TYPES
 from dataclasses import dataclass
+
+from pydex_lib.database_models import REQUEST_TYPES
 
 
 @dataclass

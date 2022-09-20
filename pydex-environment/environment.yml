@@ -1,0 +1,9 @@
+telegram:
+  token: ${ssm:/${self:provider.stage}/pydex/telegram}
+  chat_id: ${ssm:/${self:provider.stage}/pydex/telegram_chat_id}
+
+redis:
+  url: ${ssm:/${self:provider.stage}/redis/url}
+  token: ${ssm:/${self:provider.stage}/redis/token}
+  limit: 5
+  period: 60

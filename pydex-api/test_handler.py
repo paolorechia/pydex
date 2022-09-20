@@ -1,5 +1,5 @@
-import requests
 import pytest
+import requests
 
 docstring_url = "https://dev.codex.api.openimagegenius.com/add_docstring"
 api_key = ""
