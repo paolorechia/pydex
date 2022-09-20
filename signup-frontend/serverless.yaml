@@ -42,7 +42,7 @@ functions:
     events:
       - http:
           path: /signup
-          method: POST
+          method: GET
     layers:
       - Ref: PythonRequirementsLambdaLayer
     timeout: 6
@@ -69,8 +69,8 @@ custom:
     maxRequestsPerSecond: 2
     maxConcurrentRequests: 5
   domainName:
-    dev: ${self:provider.stage}.codex.api.openimagegenius.com
-    prod: codex.api.openimagegenius.com
+    dev: ${self:provider.stage}.signup.codex.openimagegenius.com
+    prod: signup.codex.openimagegenius.com
   customDomain:
     domainName: ${self:custom.domainName.${self:provider.stage}}
     stage: ${self:provider.stage}
@@ -78,7 +78,6 @@ custom:
     endpointType: EDGE
     securityPolicy: tls_1_2
     apiType: rest
-    basePath: /auth
   pythonRequirements:
     zip: true
     layer: true
