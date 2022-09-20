@@ -1,0 +1,85 @@
+service: pydex-registration
+frameworkVersion: "3"
+
+package:
+  patterns:
+    - "!.serverless"
+    - "!node_modules"
+    - "!.gitignore"
+    - "!package.json"
+    - "!package-lock.json"
+    - "!.requirements.zip"
+    - "handler.py"
+    - "html"
+
+provider:
+  name: aws
+  runtime: python3.9
+  stage: ${opt:stage}
+  region: eu-central-1
+  memorySize: 256
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - "dynamodb:PutItem"
+            - "dynamodb:GetItem"
+            - "dynamodb:UpdateItem"
+            - "dynamodb:Query"
+          Resource:
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.userTableName}"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.userTableName}/index/*"
+  environment:
+    # Tables
+    USER_TABLE_NAME: ${self:custom.userTableName}
+    STAGE: ${self:provider.stage}
+    GOOGLE_OAUTH_ID: ${self:custom.googleOAuthID}
+
+functions:
+  signup:
+    handler: handler.signup
+    events:
+      - http:
+          path: /signup
+          method: POST
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
+    timeout: 6
+
+  signupRedirect:
+    handler: handler.google_redirect
+    events:
+      - http:
+          path: /signup
+          method: POST
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
+    timeout: 6
+
+plugins:
+  - serverless-domain-manager
+  - serverless-python-requirements
+  - serverless-api-gateway-throttling
+
+custom:
+  userTableName: ${self:service}-users-table-${self:provider.stage}
+  googleOAuthID: 492480302511-mngj2psfpfrfj13efmns71n9c4pe030l.apps.googleusercontent.com
+  apiGatewayThrottling:
+    maxRequestsPerSecond: 2
+    maxConcurrentRequests: 5
+  domainName:
+    dev: ${self:provider.stage}.codex.api.openimagegenius.com
+    prod: codex.api.openimagegenius.com
+  customDomain:
+    domainName: ${self:custom.domainName.${self:provider.stage}}
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+    endpointType: EDGE
+    securityPolicy: tls_1_2
+    apiType: rest
+    basePath: /auth
+  pythonRequirements:
+    zip: true
+    layer: true
+    usePipenv: false
