@@ -22,7 +22,3 @@ def signup(event, context):
         "headers": {"Content-Type": "text/html"},
         "body": html,
     }
-
-
-def google_redirect(event, context):
-    pass

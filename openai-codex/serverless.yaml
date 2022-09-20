@@ -32,13 +32,12 @@ provider:
             - "dynamodb:UpdateItem"
             - "dynamodb:Query"
           Resource:
-            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.userTableName}"
-            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.userTableName}/index/*"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.databaseInfo.userTableName}"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.databaseInfo.userTableName}/index/*"
   environment:
     # Tables
-    USER_TABLE_NAME: ${self:custom.userTableName}
+    USER_TABLE_NAME: ${self:custom.databaseInfo.userTableName}
     STAGE: ${self:provider.stage}
-    GOOGLE_OAUTH_ID: ${self:custom.googleOAuthID}
 
 functions:
   pydex:
@@ -77,8 +76,7 @@ plugins:
   - serverless-api-gateway-throttling
 
 custom:
-  userTableName: ${self:service}-users-table-${self:provider.stage}
-  googleOAuthID: 492480302511-mngj2psfpfrfj13efmns71n9c4pe030l.apps.googleusercontent.com
+  databaseInfo: ${file(../database/serverless.yml):custom}
   apiGatewayThrottling:
     maxRequestsPerSecond: 2
     maxConcurrentRequests: 5
@@ -97,17 +95,3 @@ custom:
     layer: true
     usePipenv: false
   
-
-resources:
-  Resources:
-    UserTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.userTableName}
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: api_token
-            AttributeType: S
-        KeySchema:
-          - AttributeName: api_token
-            KeyType: HASH

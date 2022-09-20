@@ -29,11 +29,11 @@ provider:
             - "dynamodb:UpdateItem"
             - "dynamodb:Query"
           Resource:
-            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.userTableName}"
-            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.userTableName}/index/*"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.databaseInfo.userTableName}"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.databaseInfo.userTableName}/index/*"
   environment:
     # Tables
-    USER_TABLE_NAME: ${self:custom.userTableName}
+    USER_TABLE_NAME: ${self:custom.databaseInfo.userTableName}
     STAGE: ${self:provider.stage}
     GOOGLE_OAUTH_ID: ${self:custom.googleOAuthID}
 
@@ -49,7 +49,7 @@ functions:
     timeout: 6
 
   signupRedirect:
-    handler: handler.google_redirect
+    handler: redirect.google_redirect
     events:
       - http:
           path: /signup
@@ -64,7 +64,7 @@ plugins:
   - serverless-api-gateway-throttling
 
 custom:
-  userTableName: ${self:service}-users-table-${self:provider.stage}
+  databaseInfo: ${file(../database/serverless.yml):custom}
   googleOAuthID: 492480302511-mngj2psfpfrfj13efmns71n9c4pe030l.apps.googleusercontent.com
   apiGatewayThrottling:
     maxRequestsPerSecond: 2
