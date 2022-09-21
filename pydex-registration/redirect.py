@@ -129,9 +129,13 @@ def google_redirect(event, context):
 
         logger.info("Creating new user :)")
 
-        new_user = models.UserModel(api_token=api_token, unique_user_id=unique_user_id)
+        user = models.UserModel(
+            api_token=api_token,
+            unique_user_id=unique_user_id,
+            google_user_id=google_user_id,
+        )
 
-        db.save_user(new_user)
+        db.save_user(user)
         logger.info("New user created: %s", unique_user_id)
         telegram_client.send_message(f"New user created: {unique_user_id}")
 
@@ -139,7 +143,7 @@ def google_redirect(event, context):
 
     response = {
         "statusCode": 200,
-        "body": newuser_template.render(api_token=new_user.api_token),
+        "body": newuser_template.render(api_token=user.api_token),
         "headers": {
             "Set-Cookie": "Domain=openimagegenius.com; Secure",
             "Content-Type": "text/html",

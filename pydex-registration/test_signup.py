@@ -5,7 +5,13 @@ import pytest
 
 
 @patch.dict(
-    os.environ, {"STAGE": "dev", "TELEGRAM_TOKEN": "test", "TELEGRAM_CHAT_ID": "123"}
+    os.environ,
+    {
+        "STAGE": "dev",
+        "TELEGRAM_TOKEN": "test",
+        "TELEGRAM_CHAT_ID": "123",
+        "GOOGLE_OAUTH_ID": "123",
+    },
 )
 def test_signup_render():
     from signup import signup
@@ -14,4 +20,5 @@ def test_signup_render():
     print(response)
     assert response["statusCode"] == 200
     assert response["headers"]["Content-Type"] == "text/html"
-    assert "https://dev.codex.api.openimagegenius.com/redirect" in response["body"]
+    assert "https://dev.codex.api.openimagegenius.com/signup" in response["body"]
+

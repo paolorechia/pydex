@@ -61,6 +61,7 @@ class Repository:
         item = {
             Metadata.UserTable.primary_key: {"S": new_user.api_token},
             "unique_user_id": {"S": new_user.unique_user_id},
+            "google_user_id": {"S": new_user.google_user_id},
         }
         self.ddb.put_item(TableName=self.environment.user_table_name, Item=item)
         logger.info("User saved")

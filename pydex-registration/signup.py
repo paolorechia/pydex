@@ -10,8 +10,8 @@ env = Environment(
 )
 
 urls = {
-    "dev": "https://dev.codex.api.openimagegenius.com/signup",
-    "prod": "https://codex.api.openimagegenius.com/signup",
+    "dev": "https://dev.signup.codex.openimagegenius.com/signup",
+    "prod": "https://signup.codex.openimagegenius.com/signup",
 }
 
 signup_template = env.get_template("signup.html")
@@ -27,7 +27,7 @@ http_session = requests.Session()
 def signup(event, context):
     logger.info("Event: %s", event)
     html = signup_template.render(
-        url=urls[stage], google_app_id=os.environ["GOOGLE_OAUTH_ID"]
+        url=urls[stage], google_app_id=os.environ["GOOGLE_OAUTH_APP_ID"]
     )
     return {
         "statusCode": 200,
