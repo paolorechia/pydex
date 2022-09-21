@@ -34,13 +34,18 @@ provider:
   environment:
     # Tables
     USER_TABLE_NAME: ${self:custom.databaseInfo.userTableName}
+    GOOGLE_USER_ID_INDEX_NAME: ${self:custom.databaseInfo.googleUserIdIndexName}
+    UNIQUE_USER_ID_INDEX_NAME: ${self:custom.databaseInfo.uniqueUserIdIndexName}
+
     STAGE: ${self:provider.stage}
     GOOGLE_OAUTH_ID: ${self:custom.googleOAuthID}
+
+    TELEGRAM_CHAT_ID: ${self:custom.commonEnvironment.telegram.chat_id}
+    TELEGRAM_TOKEN: ${self:custom.commonEnvironment.telegram.token}
+
     REDIS_PREFIX: ${ssm:/${self:provider.stage}/redis/pydex/registration/prefix}
     REDIS_URL: ${self:custom.commonEnvironment.redis.url}
     REDIS_TOKEN: ${self:custom.commonEnvironment.redis.token}
-    TELEGRAM_CHAT_ID: ${self:custom.commonEnvironment.telegram.chat_id}
-    TELEGRAM_TOKEN: ${self:custom.commonEnvironment.telegram.token}
 
 functions:
   signup:

@@ -12,6 +12,8 @@ class EnvironmentInfo:
     def __init__(self) -> None:
         # tables
         self.user_table_name = os.environ["USER_TABLE_NAME"]
+        self.google_user_id_index_name = os.environ["GOOGLE_USER_ID_INDEX_NAME"]
+        self.unique_user_id_index_name = os.environ["UNIQUE_USER_ID_INDEX_NAME"]
 
 
 def flatten_response(dynamodb_dict_response):
@@ -57,11 +59,46 @@ class Repository:
         logger.info("Table name: %s", self.environment.user_table_name)
         logger.info("DDB Item: %s", to_dynamodb_strings(new_user.dict()))
         item = {
-                Metadata.UserTable.primary_key: {"S": new_user.api_token},
-                "unique_user_id": {"S": new_user.unique_user_id},
-            }
-        self.ddb.put_item(
-            TableName=self.environment.user_table_name,
-            Item=item
-        )
+            Metadata.UserTable.primary_key: {"S": new_user.api_token},
+            "unique_user_id": {"S": new_user.unique_user_id},
+        }
+        self.ddb.put_item(TableName=self.environment.user_table_name, Item=item)
         logger.info("User saved")
+
+    def get_user_by_google_user_id(self, google_user_id: str) -> Optional[UserModel]:
+        logger.info("Requesting user by google_user_id: %s", google_user_id)
+        response = self.ddb.query(
+            TableName=self.environment.user_table_name,
+            IndexName=self.environment.google_user_id_index_name,
+            KeyConditionExpression="google_user_id = :gui",
+            ExpressionAttributeValues={":gui": {"S": google_user_id}},
+        )
+        logger.info("Response from DynamoDB: %s", response)
+        existing_users = response["Items"]
+        if len(existing_users) > 1:
+            logger.info("Multiple users found, something went wrong :(")
+            raise IndexError("Multiple users error")
+        elif len(existing_users) == 1:
+            user = existing_users[0]
+            logger.info("User found, user: %s", str(user))
+            return UserModel(**flatten_response(user))
+        return None
+
+    def get_user_by_unique_user_id(self, unique_user_id: str) -> Optional[UserModel]:
+        logger.info("Requesting user by unique_user_id: %s", unique_user_id)
+        response = self.ddb.query(
+            TableName=self.environment.user_table_name,
+            IndexName=self.environment.unique_user_id_index_name,
+            KeyConditionExpression="unique_user_id = :uui",
+            ExpressionAttributeValues={":uui": {"S": unique_user_id}},
+        )
+        logger.info("Response from DynamoDB: %s", response)
+        existing_users = response["Items"]
+        if len(existing_users) > 1:
+            logger.info("Multiple users found, something went wrong :(")
+            raise IndexError("Multiple users error")
+        elif len(existing_users) == 1:
+            user = existing_users[0]
+            logger.info("User found, user: %s", str(user))
+            return UserModel(**flatten_response(user))
+        return None
