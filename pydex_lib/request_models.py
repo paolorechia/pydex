@@ -23,3 +23,10 @@ class Request:
             raise ValueError(f"Request type {self.request_type} is not recognized.")
         if len(self.data) > 1024:
             raise ValueError("Data is too long")
+
+    def dict(self):
+        """
+        Converts dataclass to dictionary
+        :return:
+        """
+        return {"data": self.data, "request_type": self.request_type}

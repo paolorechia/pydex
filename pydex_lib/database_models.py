@@ -11,5 +11,8 @@ class UserModel:
     api_token: str
     unique_user_id: str
 
+    def dict(self):
+        return {"api_token": self.api_token, "unique_user_id": self.unique_user_id}
+
 
 REQUEST_TYPES = frozenset(["add_docstring"])

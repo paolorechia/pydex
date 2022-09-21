@@ -18,8 +18,8 @@ provider:
 
 custom:
   # user table
-  userTableName: ${self:service}-users-table-${self:provider.stage}
-  googleUserIdIndexName: ${self:service}-google-id-index-${self:provider.stage}
+  userTableName: pydex-database-users-table-${self:provider.stage}
+  googleUserIdIndexName: pydex-database-google-id-index-${self:provider.stage}
 
 resources:
   Resources:
