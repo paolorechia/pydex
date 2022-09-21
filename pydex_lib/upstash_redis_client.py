@@ -8,11 +8,11 @@ logger.setLevel(logging.INFO)
 
 
 class RedisEnvironmentInfo:
-    def __init__(self) -> None:
+    def __init__(self, api_url, token, prefix) -> None:
         # tables
-        self.api_url = os.environ["REDIS_URL"]
-        self.token = os.environ["REDIS_TOKEN"]
-        self.prefix = os.environ["REDIS_PREFIX"]
+        self.api_url = api_url
+        self.token = token
+        self.prefix = prefix
 
 
 class RedisUpstashRestAPIClient:

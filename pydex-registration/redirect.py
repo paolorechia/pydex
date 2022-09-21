@@ -15,10 +15,8 @@ from requests import Session
 from pydex_lib import database_models as models
 from pydex_lib import repository as repo_module
 from pydex_lib import telegram
-from pydex_lib.rate_limiter import get_limiter
-from pydex_lib.request_helper import build_rate_limited_response
-from pydex_lib.upstash_redis_client import RedisEnvironmentInfo
 from pydex_lib.telegram import telegram_on_error
+from pydex_lib.rate_limiter import rate_limited
 
 dynamodb_client = boto3.client("dynamodb")
 environment = repo_module.EnvironmentInfo()
@@ -33,45 +31,17 @@ http_session = Session()
 telegram_client = telegram.get_telegram(http_session)
 
 google_oauth_app_id = os.environ["GOOGLE_OAUTH_APP_ID"]
+stage = os.environ["STAGE"]
 
-html_success_page = """
-<html>
-    <head>
-        <title>openimagegenius</title>
-    </head>
-    <body>
-        <h2> Authentication Successful, Redirecting... </h2>
-        <script>
-            location.assign("{}")
-        </script>
-    </body>
-</html>
-"""
-
-html_failure_page = """
-<html>
-    <head>
-        <title>openimagegenius</title>
-    </head>
-    <body>
-        <h2> Authentication Failed, Redirecting... </h2>
-        <h3> Error: {} </h3>
-    </body>
-</html>
-"""
 
 @telegram_on_error(http_session)
+@rate_limited(
+    event_key="requestContext.identity.sourceIp",
+    prefix=f"google_oauth-{stage}",
+    limit=5,
+    period=60,
+)
 def google_redirect(event, context):
-    logger.info("Event: %s", event)
-    ip_address = event.get("requestContext", {}).get("identity", {}).get("sourceIp")
-    logger.info("IP Address: %s", ip_address)
-    if not ip_address:
-        logger.warn("IP Address not found!")
-        return build_rate_limited_response()
-    rate_limiter = get_limiter()
-    if not rate_limiter.should_allow(ip_address):
-        return build_rate_limited_response()
-
     try:
         body = event["body"]
         logger.info("Body: %s", body)
@@ -80,8 +50,7 @@ def google_redirect(event, context):
     except (KeyError, ValueError, IndexError):
         return {"statusCode": 400, "body": "Bad Request"}
 
-    stage = event["requestContext"]["stage"]
-    client_id = client_ids[stage]
+    client_id = google_oauth_app_id
 
     request = requests.Request()
     id_info = id_token.verify_oauth2_token(token, request, client_id)

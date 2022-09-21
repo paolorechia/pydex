@@ -37,12 +37,14 @@ provider:
     STAGE: ${self:provider.stage}
     GOOGLE_OAUTH_ID: ${self:custom.googleOAuthID}
     REDIS_PREFIX: ${ssm:/${self:provider.stage}/redis/pydex/registration/prefix}
+    REDIS_URL: ${self:custom.commonEnvironment.redis.url}
+    REDIS_TOKEN: ${self:custom.commonEnvironment.redis.token}
     TELEGRAM_CHAT_ID: ${self:custom.commonEnvironment.telegram.chat_id}
     TELEGRAM_TOKEN: ${self:custom.commonEnvironment.telegram.token}
 
 functions:
   signup:
-    handler: handler.signup
+    handler: signup.signup
     events:
       - http:
           path: /signup
@@ -69,7 +71,7 @@ plugins:
 custom:
   databaseInfo: ${file(../pydex-database/serverless.yml):custom}
   commonEnvironment: ${file(../pydex-environment/environment.yml)}
-  googleOAuthID: 492480302511-mngj2psfpfrfj13efmns71n9c4pe030l.apps.googleusercontent.com
+  googleOAuthID: 1720531904-67fokmbktf4hvcrull5mk04hi2lvu25c.apps.googleusercontent.com
   apiGatewayThrottling:
     maxRequestsPerSecond: 2
     maxConcurrentRequests: 5

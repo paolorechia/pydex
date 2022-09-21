@@ -39,11 +39,14 @@ def telegram_on_error(http_session):
         def wrapped_function(*args, **kwargs):
             telegram_client = get_telegram(http_session)
             try:
-                func(*args, **kwargs)
+                logger.info("Invoking func")
+                response = func(*args, **kwargs)
+                logger.info("Func response: %s", response)
+                return response
             except Exception as e:
+                logger.error("Error in function (%s): %s", func.__name__, str(e))
                 telegram_client.send_message(f"Error: {e}")
                 raise e
-            return func(*args, **kwargs)
 
         return wrapped_function
 
