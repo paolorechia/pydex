@@ -74,13 +74,3 @@ def authorizer(event, context):
     logger.info("Authorization denied: %s", deny_policy)
     return deny_policy
 
-
-@telegram_on_error(http_session)
-def add_user(event, context):
-    logger.info("Event: %s", event)
-    token_size = 32
-    user_id = str(uuid4())
-    api_token = secrets.token_urlsafe(token_size)
-
-    db.save_user(UserModel(api_token=api_token, unique_user_id=user_id))
-    return {"statusCode": 200}

@@ -74,12 +74,6 @@ functions:
       - Ref: PythonRequirementsLambdaLayer
     timeout: 6
 
-  addUser:
-    handler: handler.add_user
-    layers:
-      - Ref: PythonRequirementsLambdaLayer
-    timeout: 6
-
 plugins:
   - serverless-domain-manager
   - serverless-python-requirements
