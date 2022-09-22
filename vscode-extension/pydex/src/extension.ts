@@ -1,11 +1,13 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { SecretStorage } from "vscode";
 import got from 'got';
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-const pydexUrl = "https://dev.codex.api.openimagegenius.com";
+
+const pydexDevUrl = "https://dev.codex.api.openimagegenius.com";
+const pydexProdUrl = "https://codex.api.openimagegenius.com";
+
+const env = "dev";
+
+let pydexUrl = env === "dev" ? pydexDevUrl : pydexProdUrl;
 
 interface PydexResponse {
 	response: EditResponse;
@@ -38,9 +40,6 @@ async function usePydex(secrets: SecretStorage, command: string) {
 	}
 
 	console.log("User token: ", userToken);
-
-	// The code you place here will be executed every time your command is executed
-	// Display a message box to the user
 	const document = activeEditor.document;
 	const selection = activeEditor.selection;
 
