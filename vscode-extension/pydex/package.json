@@ -14,6 +14,29 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "walkthroughs": [
+      {
+        "id": "setting-up-pydex",
+        "title": "Setting up pydex",
+        "description": "How to get started",
+        "steps": [
+          {
+            "id": "Invoking a command",
+            "title": "Invoking a command",
+            "description": "You can invoke a command by pressing `Ctrl+Shift+P` and typing `pydex`.",
+            "media": {
+              "markdown": "media/walkthrough.md"
+            },
+            "completionEvents": [
+              "onCommand:pydex.addDocstring",
+              "onCommand:pydex.addTypeHints",
+              "onCommand:pydex.fixSyntaxError",
+              "onCommand:pydex.improveCodeQuality"
+            ]
+          }
+        ]
+      }
+    ],
     "commands": [
       {
         "command": "pydex.addDocstring",
