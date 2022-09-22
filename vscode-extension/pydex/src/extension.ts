@@ -66,7 +66,11 @@ async function usePydex(secrets: SecretStorage, command: string) {
 			body: requestBody
 		}).json();
 	} catch (e: any) {
-		const apiStatusCode = `Error calling API: ${e.response.statusCode}`
+		const apiStatusCode = `Error calling API: ${e.response.statusCode}`;
+		if (e.response.statusCode === 401 || e.response.statusCode === 403) {
+			console.log("Unauthorized, deleting provided token");
+			await secrets.delete("pydex-token");
+		}
 		console.error();
 		try {
 			const errorMessage = JSON.parse(e.response.body).Message;
