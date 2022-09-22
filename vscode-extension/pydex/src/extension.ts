@@ -70,7 +70,6 @@ async function usePydex(secrets: SecretStorage, command: string) {
 			console.log("Unauthorized, deleting provided token");
 			await secrets.delete("pydex-token");
 		}
-		console.error();
 		try {
 			const errorMessage = JSON.parse(e.response.body).Message;
 			console.error(errorMessage);
@@ -80,6 +79,7 @@ async function usePydex(secrets: SecretStorage, command: string) {
 			vscode.window.showErrorMessage(apiStatusCode);
 		}
 	}
+
 	if (response) {
 		console.log("From got", response);
 		const editedText = response.response.text;
@@ -97,13 +97,20 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const secrets: SecretStorage = context.secrets;
 
-	console.log('Congratulations, your extension "pydex" is now active!');
-
-	let disposable = vscode.commands.registerCommand('pydex.addDocstring', function () {
-		usePydex(secrets, "add_docstring");
+	const commands = [
+		["addDocstring", "add_docstring"],
+		["addTypeHints", "add_type_hints"],
+		["addUnitTest", "add_unit_test"],
+		["fixSyntaxError", "fix_syntax_error"],
+		["improveCodeQuality", "improve_code_quality"],
+	];
+	commands.forEach(tuple_ => {
+		const [commandName, pydexCommand] = tuple_;
+		const command = vscode.commands.registerCommand(`pydex.${commandName}`, () => {
+			usePydex(secrets, pydexCommand);
+		});
+		context.subscriptions.push(command);
 	});
-
-	context.subscriptions.push(disposable);
 }
 
 // this method is called when your extension is deactivated

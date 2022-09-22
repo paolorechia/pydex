@@ -18,6 +18,18 @@
       {
         "command": "pydex.addDocstring",
         "title": "Add Docstring to Selection"
+      },
+      {
+        "command": "pydex.addTypeHints",
+        "title": "Add type hints to selection"
+      },
+      {
+        "command": "pydex.fixSyntaxError",
+        "title": "Fix syntax error"
+      },
+      {
+        "command": "pydex.improveCodeQuality",
+        "title": "Improve code quality"
       }
     ],
     "menus": {
@@ -25,11 +37,38 @@
         {
           "command": "pydex.addDocstring",
           "when": "editorHasSelection"
+        },
+        {
+          "command": "pydex.addTypeHints",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "pydex.fixSyntaxError",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "pydex.improveCodeQuality",
+          "when": "editorHasSelection"
         }
       ],
       "editor/context": [
         {
           "command": "pydex.addDocstring",
+          "when": "editorHasSelection",
+          "group": "7_modification"
+        },
+        {
+          "command": "pydex.addTypeHints",
+          "when": "editorHasSelection",
+          "group": "7_modification"
+        },
+        {
+          "command": "pydex.fixSyntaxError",
+          "when": "editorHasSelection",
+          "group": "7_modification"
+        },
+        {
+          "command": "pydex.improveCodeQuality",
           "when": "editorHasSelection",
           "group": "7_modification"
         }

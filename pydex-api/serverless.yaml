@@ -83,8 +83,8 @@ custom:
   databaseInfo: ${file(../pydex-database/serverless.yml):custom}
   commonEnvironment: ${file(../pydex-environment/environment.yml)}
   apiGatewayThrottling:
-    maxRequestsPerSecond: 2
-    maxConcurrentRequests: 5
+    maxRequestsPerSecond: 10
+    maxConcurrentRequests: 20
   domainName:
     dev: ${self:provider.stage}.codex.api.openimagegenius.com
     prod: codex.api.openimagegenius.com

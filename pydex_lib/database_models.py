@@ -18,6 +18,3 @@ class UserModel:
             "unique_user_id": self.unique_user_id,
             "google_user_id": self.google_user_id,
         }
-
-
-REQUEST_TYPES = frozenset(["add_docstring"])

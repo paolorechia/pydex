@@ -41,7 +41,7 @@ class RateLimiter:
 limiter = None
 
 
-def get_limiter(api_url, token, prefix, limit, period):
+def get_limiter(api_url: str, token: str, prefix: str, limit: int, period: int):
     global limiter
     if limiter:
         return limiter
@@ -55,6 +55,7 @@ def get_limiter(api_url, token, prefix, limit, period):
         reset_period_in_seconds=period,
     )
     return limiter
+
 
 
 def rate_limited(event_key, prefix, limit, period):

@@ -46,14 +46,39 @@ def pydex(event, context):
 
     user_id = event.get("requestContext", {}).get("authorizer", {}).get("user")
 
+    input_function = request.data
+    instruction = None
+
     if request_type == "add_docstring":
-        input_function = request.data
+        instruction = "Add a detailed docstring with arguments, exceptions and return type to the function."
+        temperature = 0.5
 
-        with OpenAICodex(user_id=user_id, session=http_session) as codex:
-            edition = codex.edit(input_=input_function, instruction="Add docstring")
-            return build_pydex_response(200, edition)
+    if request_type == "add_type_hints":
+        instruction = "Add type hints to the function."
+        temperature = 0.3
 
-    return build_pydex_response(400, "Invalid request")
+    if request_type == "add_unit_test":
+        instruction = "Add an unit test for the function."
+        temperature = 0.3
+
+    if request_type == "fix_syntax_error":
+        instruction = "Fix the syntax error."
+        temperature = 0.0
+
+    if request_type == "improve_code_quality":
+        instruction = "Improve code quality."
+        temperature = 0.0
+
+    if not instruction:
+        return build_pydex_response(400, "Invalid request")
+
+    with OpenAICodex(user_id=user_id, session=http_session) as codex:
+        edition = codex.edit(
+            input_=input_function,
+            instruction=instruction,
+            temperature=temperature,
+        )
+        return build_pydex_response(200, edition)
 
 
 @telegram_on_error(http_session)
@@ -73,4 +98,3 @@ def authorizer(event, context):
     deny_policy = create_policy(resources, effect="Deny")
     logger.info("Authorization denied: %s", deny_policy)
     return deny_policy
-
