@@ -16,9 +16,11 @@ Use at your own risk :)
 
 ## Requirements
 
-You need a pydex token to use this extension. You signup for free at:
+You need a pydex token to use this extension. You can signup for free at:
 
 https://signup.codex.openimagegenius.com/signup
+
+NOTE: the signup is currently disabled for new users, until this app is reviewed by OpenAI
 
 ## Extension Settings
 
