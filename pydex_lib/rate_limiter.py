@@ -69,7 +69,7 @@ def rate_limited(event_key, prefix, limit, period):
             rate_limiter = get_limiter(
                 api_url=os.environ["REDIS_URL"],
                 token=os.environ["REDIS_TOKEN"],
-                prefix=os.environ["REDIS_PREFIX"],
+                prefix=prefix,
                 limit=limit,
                 period=period,
             )

@@ -52,24 +52,41 @@ async function usePydex(secrets: SecretStorage, command: string) {
 	const url = `${pydexUrl}/${command}`;
 
 	console.log("Calling API", url, "with body: ", requestBody);
-	const response: PydexResponse = await got(url, {
-		method: "POST",
-		headers: {
-			// eslint-disable-next-line @typescript-eslint/naming-convention
-			"Content-Type": "application/json",
-			// eslint-disable-next-line @typescript-eslint/naming-convention
-			"Authorization": userToken
-		},
-		body: requestBody
-	}).json();
 
-	console.log("From got", response);
-	const editedText = response.response.text;
+	let response: PydexResponse | undefined = undefined;
+	try {
+		response = await got(url, {
+			method: "POST",
+			headers: {
+				// eslint-disable-next-line @typescript-eslint/naming-convention
+				"Content-Type": "application/json",
+				// eslint-disable-next-line @typescript-eslint/naming-convention
+				"Authorization": userToken
+			},
+			body: requestBody
+		}).json();
+	} catch (e: any) {
+		const apiStatusCode = `Error calling API: ${e.response.statusCode}`
+		console.error();
+		try {
+			const errorMessage = JSON.parse(e.response.body).Message;
+			console.error(errorMessage);
+			vscode.window.showErrorMessage(errorMessage);
+		} catch (error) {
+			console.error("Error parsing error response", error);
+			vscode.window.showErrorMessage(apiStatusCode);
+		}
+	}
+	if (response) {
+		console.log("From got", response);
+		const editedText = response.response.text;
 
-	activeEditor.edit(editBuilder => {
-		console.log("Edit builder", editBuilder);
-		editBuilder.replace(selection, editedText);
-	});
+		activeEditor.edit(editBuilder => {
+			console.log("Edit builder", editBuilder);
+			editBuilder.replace(selection, editedText);
+		});
+	}
+
 
 };
 
