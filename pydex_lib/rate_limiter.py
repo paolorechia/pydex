@@ -6,6 +6,7 @@ import os
 from pydash import _
 from requests import Session
 
+from pydex_lib.request_helper import build_rate_limited_response
 from pydex_lib.upstash_redis_client import (
     RedisEnvironmentInfo,
     RedisUpstashRestAPIClient,
@@ -84,10 +85,7 @@ def rate_limited(event_key, prefix, limit, period):
                 return response
             else:
                 logger.info("Rate limit - exceeded")
-                return {
-                    "statusCode": 429,
-                    "body": json.dumps({"message": "Rate limit exceeded"}),
-                }
+                return build_rate_limited_response()
 
         return wrapped_function
 
