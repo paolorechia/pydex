@@ -5,9 +5,9 @@ import got from 'got';
 const pydexDevUrl = "https://dev.codex.api.openimagegenius.com";
 const pydexProdUrl = "https://codex.api.openimagegenius.com";
 
-const env = "dev";
 
-let pydexUrl = env === "dev" ? pydexDevUrl : pydexProdUrl;
+// const pydexUrl = pydexDevUrl;
+const pydexUrl = pydexProdUrl;
 
 interface PydexResponse {
 	response: EditResponse;

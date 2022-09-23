@@ -2,7 +2,7 @@
   "name": "pydex",
   "displayName": "pydex",
   "description": "Unofficial OpenAI API extension for Python",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "engines": {
     "vscode": "^1.71.0"
   },
@@ -12,6 +12,10 @@
   "activationEvents": [
     "onCommand:pydex.addDocstring"
   ],
+  "repository": {
+    "url": "https://github.com/paolorechia/pydex"
+  },
+  "publisher": "pydex",
   "main": "./dist/extension.js",
   "contributes": {
     "walkthroughs": [
