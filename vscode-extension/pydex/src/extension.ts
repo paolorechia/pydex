@@ -69,6 +69,9 @@ async function usePydex(secrets: SecretStorage, command: string) {
 		if (e.response.statusCode === 401 || e.response.statusCode === 403) {
 			console.log("Unauthorized, deleting provided token");
 			await secrets.delete("pydex-token");
+			const errorMessage = "Unauthorized, provided token is deleted";
+			console.error(errorMessage);
+			vscode.window.showErrorMessage(errorMessage);
 		}
 		try {
 			const errorMessage = JSON.parse(e.response.body).Message;
