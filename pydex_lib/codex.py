@@ -77,7 +77,22 @@ class OpenAICodex:
         # For now, assume just one choice is available
         return completion["choices"][0]
 
+
     def edit(self, input_, instruction, temperature=0.5):
+        """
+        Edit the input text according to the given instruction.
+
+        Args:
+            input_ (str): The text to edit.
+            instruction (str): The instruction to apply to the input.
+            temperature (float): The temperature to use for the edition.
+
+        Returns:
+            str: The edited text.
+
+        Raises:
+            ValueError: If the input text is not safe.
+        """
         if not self.is_safe_content(input_):
             raise ValueError("Content is not safe.")
 
