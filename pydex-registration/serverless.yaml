@@ -18,7 +18,8 @@ provider:
   runtime: python3.9
   stage: ${opt:stage}
   region: eu-central-1
-  memorySize: 256
+  memorySize: 128
+  architecture: arm64
   iam:
     role:
       statements:
@@ -76,7 +77,7 @@ plugins:
 custom:
   databaseInfo: ${file(../pydex-database/serverless.yml):custom}
   commonEnvironment: ${file(../pydex-environment/environment.yml)}
-  googleOAuthID: 1720531904-67fokmbktf4hvcrull5mk04hi2lvu25c.apps.googleusercontent.com
+  googleOAuthID: ${ssm:/prod/pydex/google-oauth-app-id}
   apiGatewayThrottling:
     maxRequestsPerSecond: 2
     maxConcurrentRequests: 5
