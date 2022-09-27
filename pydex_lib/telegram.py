@@ -34,6 +34,14 @@ def get_telegram(http_session) -> TelegramClient:
 
 
 def telegram_on_error(http_session):
+    """
+    Decorator for sending a message to a telegram bot if an exception occurs in the decorated function.
+
+    :param http_session: The http session to use for the telegram client.
+    :type http_session: requests.Session
+    :return: The decorated function.
+    :rtype: function
+    """
     def decorator_func(func):
         @functools.wraps(func)
         def wrapped_function(*args, **kwargs):

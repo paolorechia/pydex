@@ -21,7 +21,8 @@ provider:
   runtime: python3.9
   stage: ${opt:stage}
   region: eu-central-1
-  memorySize: 256
+  memorySize: 1024
+  architecture: arm64
   iam:
     role:
       statements:
