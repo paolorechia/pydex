@@ -20,8 +20,6 @@ You need a pydex token to use this extension. You can signup for free at:
 
 https://signup.codex.openimagegenius.com/signup
 
-NOTE: the signup is currently disabled for new users, until this app is reviewed by OpenAI
-
 ## Extension Settings
 
 There are no pre-defined settings for this extension. It should add the following commands to your environment:
